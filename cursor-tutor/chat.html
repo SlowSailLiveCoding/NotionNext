@@ -1,0 +1,48 @@
+<html>
+  <head>
+    <title>Cursor Tutor</title>
+  </head>
+  <body>
+    <h1>Welcome to Cursor</h1>
+    <p>1. Try generating with command K on a new line. Ask for a pytorch script of a feedforward neural network</p>
+    <p>2. Then, select the outputted code and hit chat. Ask if there's a bug. Ask how to improve.</p>
+    <p>3. Try selecting some code and hitting edit. Ask the bot to add residual layers.</p>
+    <p>4. To try out cursor on your own projects, go to the file menu (top left) and open a folder.</p>
+    <form action="https://api.openai.com/v1/engines/davinci-codex/completions" method="post">
+      <label for="prompt">Please write a prompt:</label><br>
+      <input type="text" id="prompt" name="prompt" value="请写一个调用chatGPT API的程序"><br>
+      <label for="max_tokens">Max Tokens:</label><br>
+      <input type="number" id="max_tokens" name="max_tokens" value="60"><br>
+      <label for="temperature">Temperature:</label><br>
+      <input type="number" id="temperature" name="temperature" value="0.7"><br><br>
+      <input type="submit" value="Submit">
+      <input type="hidden" name="Authorization" value="">
+      <input type="hidden" name="Content-Type" value="application/json">
+    </form>
+  </body>
+</html>
+<div id="chat-output"></div>
+<script>
+  const form = document.querySelector('form');
+  const chatOutput = document.querySelector('#chat-output');
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const prompt = document.querySelector('#prompt').value;
+    const maxTokens = document.querySelector('#max_tokens').value;
+    const temperature = document.querySelector('#temperature').value;
+    const response = await fetch('https://api.openai.com/v1/engines/davinci-codex/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer YOUR_API_KEY'
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+        max_tokens: maxTokens,
+        temperature: temperature
+      })
+    });
+    const data = await response.json();
+    chatOutput.innerHTML += `<p>${prompt}</p><p>${data.choices[0].text}</p>`;
+  });
+</script>
